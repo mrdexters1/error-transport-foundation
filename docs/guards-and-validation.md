@@ -118,12 +118,16 @@ ValidationError produces:
 
 ```json
 {
-  "success": false,
+  "apiVersion": "1.0",
+  "timestamp": "2024-01-15T10:30:00.000Z",
   "code": "VALIDATION_ERROR",
   "status": 422,
   "message": "Invalid email format",
-  "requestId": "abc-123"
+  "requestId": "abc-123",
+  "retryable": false,
+  "layer": "domain",
+  "meta": { "type": "VALIDATION", "fields": { "email": "Invalid email format" } }
 }
 ```
 
-Field-level details are available in error metadata. Adapters may choose whether to expose field metadata to clients.
+Field-level details are available in `meta.fields`. Adapters may choose whether to expose field metadata to clients.

@@ -91,6 +91,7 @@ See [`docs/`](docs/) for detailed guides:
 
 - [Architecture](docs/architecture.md)
 - [Error Model](docs/error-model.md)
+- [UI Error Handling](docs/ui-error-handling.md)
 - [Processing Pipeline](docs/processing-pipeline.md)
 - [Client Usage](docs/client-usage.md)
 - [Next.js Integration](docs/next-integration.md)

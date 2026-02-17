@@ -24,12 +24,14 @@ On error, returns:
 
 ```json
 {
-  "success": false,
+  "apiVersion": "1.0",
+  "timestamp": "2024-01-15T10:30:00.000Z",
   "code": "NOT_FOUND",
   "status": 404,
   "message": "User not found",
   "requestId": "abc-123",
-  "retryable": false
+  "retryable": false,
+  "layer": "domain"
 }
 ```
 
@@ -65,11 +67,15 @@ Returns on error:
 {
   success: false,
   error: {
+    apiVersion: "1.0",
+    timestamp: "2024-01-15T10:30:00.000Z",
     code: "VALIDATION_ERROR",
     status: 422,
     message: "Invalid email",
     requestId: "abc-123",
-    retryable: false
+    retryable: false,
+    layer: "domain",
+    meta: { type: "VALIDATION", fields: { email: "Invalid email" } }
   }
 }
 ```
@@ -101,12 +107,15 @@ type ActionResponse<T> =
   | { success: true; data: T }
   | { success: false; error: ApiErrorResponse };
 
-interface ApiErrorResponse {
-  success: false;
+type ApiErrorResponse = {
+  apiVersion: "1.0";
+  timestamp: string;
   code: string;
-  status: number;
   message: string;
-  requestId: string;
+  status: number;
+  requestId?: string;
   retryable?: boolean;
-}
+  layer?: string;
+  meta?: ApiErrorMeta;
+};
 ```
