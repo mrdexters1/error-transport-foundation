@@ -87,17 +87,17 @@ Use:
 
 ## Documentation
 
-Detailed documentation is available in the `docs/` folder:
+See [`docs/`](docs/) for detailed guides:
 
-- Architecture
-- Error Model
-- Processing Pipeline
-- Client Usage
-- Next.js Integration
-- Proxy vs Integration
-- Guards and Validation
-- Resilience
-- Observability (Sentry, logging, reporting)
+- [Architecture](docs/architecture.md)
+- [Error Model](docs/error-model.md)
+- [Processing Pipeline](docs/processing-pipeline.md)
+- [Client Usage](docs/client-usage.md)
+- [Next.js Integration](docs/next-integration.md)
+- [Proxy vs Integration](docs/proxy-vs-integration.md)
+- [Guards and Validation](docs/guards-and-validation.md)
+- [Resilience](docs/resilience.md)
+- [Observability](docs/observability.md) (Sentry, logging, reporting)
 
 ---
 
