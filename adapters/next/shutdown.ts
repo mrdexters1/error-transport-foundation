@@ -34,12 +34,21 @@ export function registerShutdownCallback(
   const existingIndex = state.callbacks.findIndex((c) => c.name === name);
   if (existingIndex !== -1) {
     state.callbacks[existingIndex] = { name, fn };
-    return;
+  } else {
+    state.callbacks.push({ name, fn });
   }
-  state.callbacks.push({ name, fn });
+
+  // Auto-initialize handlers on first registration
+  if (!state.handlersRegistered) {
+    initializeShutdownHandlers();
+  }
 }
 
-export function initializeShutdownHandlers(): void {
+/**
+ * Internal helper to set up process signal listeners.
+ * Called automatically by registerShutdownCallback.
+ */
+function initializeShutdownHandlers(): void {
   const state = getState();
 
   if (state.handlersRegistered) return;
