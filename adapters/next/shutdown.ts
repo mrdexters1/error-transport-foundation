@@ -45,6 +45,20 @@ export function registerShutdownCallback(
 }
 
 /**
+ * Higher-level helper for objects with .destroy() or .close() methods.
+ * Reduces boilerplate for common resources like DB clients.
+ */
+export function autoShutdown(
+  name: string,
+  resource: { destroy?: () => Promise<void> | void; close?: () => Promise<void> | void },
+): void {
+  registerShutdownCallback(name, async () => {
+    if (resource.destroy) return resource.destroy();
+    if (resource.close) return resource.close();
+  });
+}
+
+/**
  * Internal helper to set up process signal listeners.
  * Called automatically by registerShutdownCallback.
  */

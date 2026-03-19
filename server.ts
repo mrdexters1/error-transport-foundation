@@ -10,18 +10,14 @@
  */
 
 import { setFetchRequestIdResolver } from "./client/fetch-json";
-import { setRequestIdResolver } from "./core/logger/logger";
 import { requestContext } from "./core/runtime/request-context.server";
 
 /**
- * Initializes server-side foundation features:
- * - Configures request tracing for the logger
- * - Configures request tracing for fetchJSON
- *
- * Must be called once during server bootstrap.
+ * Initializes server-side foundation features.
+ * Configure request tracing for fetchJSON.
+ * Logger is now auto-initialized via request-context.server.
  */
 export const initializeFoundationServer = (): void => {
-  setRequestIdResolver(() => requestContext.getRequestId());
   setFetchRequestIdResolver(() => requestContext.getRequestId());
 };
 

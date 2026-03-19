@@ -1,11 +1,19 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## [0.0.2] - 2026-03-19
 
-The format is based on Keep a Changelog.
-This project follows Semantic Versioning.
+### Changed
+- **Deep Architecture Simplification**: 
+  - Automated `requestId` tracing for `logger` and `fetchJSON`. Tracing is now transparent and doesn't require manual initialization on the server.
+  - Simplified public API in `foundation/next` to improve developer experience (DX).
+  - Merged shutdown signal registration into a single automated flow.
 
----
+### Added
+- `autoShutdown` helper in `foundation/next` for easy one-liner resource cleanup (e.g. database, redis).
+
+### Removed
+- `initFoundation()` and `ensureFoundationInitialized()` functions as they are no longer required due to automation.
+- `adapters/next/init.ts` file.
 
 ## [0.1.0] - 2026-02-17
 

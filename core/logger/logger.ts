@@ -1,11 +1,24 @@
-// No direct import of requestContext to stay isomorphic
+// Isomorphic logger with automated server-side request tracing
+import { isServer } from "../runtime/runtime";
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
 /**
  * Global resolver for requestId (e.g. from AsyncLocalStorage or browser trace).
- * This allows the logger to stay isomorphic while still supporting trace IDs.
+ * Automatically hooks into requestContext on server-side.
  */
-let requestIdResolver: () => string | undefined = () => undefined;
+let requestIdResolver: () => string | undefined = () => {
+  if (isServer()) {
+    // Dynamic import to keep isomorphic build clean
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { requestContext } = require("../runtime/request-context.server");
+      return requestContext.getRequestId();
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+};
 
 export const setRequestIdResolver = (fn: typeof requestIdResolver): void => {
   requestIdResolver = fn;

@@ -12,7 +12,6 @@
 export { withActionHandler } from "./adapters/next/actions/with-action-handler";
 export { withErrorHandler } from "./adapters/next/http/with-error-handler";
 export {
-  ensureFoundationInitialized,
-  initFoundation,
-} from "./adapters/next/init";
-export { registerShutdownCallback } from "./adapters/next/shutdown";
+  autoShutdown,
+  registerShutdownCallback,
+} from "./adapters/next/shutdown";

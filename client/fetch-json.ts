@@ -1,5 +1,6 @@
 import { FetchError } from "../errors/transport/fetch-error";
 import type { HttpMethod } from "../http/http-method";
+import { isServer } from "../core/runtime/runtime";
 
 /**
  * HTTP methods supported in OpenAPI
@@ -50,8 +51,20 @@ export type FetchJSONParams<T> = {
 
 /**
  * Global resolver for requestId to maintain traceability across async boundaries.
+ * Automatically hooks into requestContext on server-side.
  */
-let requestIdResolver: () => string | undefined = () => undefined;
+let requestIdResolver: () => string | undefined = () => {
+  if (isServer()) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { requestContext } = require("../core/runtime/request-context.server");
+      return requestContext.getRequestId();
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+};
 
 export const setFetchRequestIdResolver = (
   fn: typeof requestIdResolver,
