@@ -1,10 +1,14 @@
 # Client Usage
 
-Foundation provides three HTTP clients for different use cases.
+Foundation provides three HTTP clients for different use cases. This guide explains how to use each client and their specific features.
 
-## fetchJSON
+---
+
+## 1. fetchJSON (External APIs)
 
 Generic HTTP client for external APIs. Use for external APIs where you own error handling logic.
+
+### Basic GET & POST
 
 ```ts
 import { fetchJSON } from "@/foundation";
@@ -23,8 +27,14 @@ const result = await fetchJSON({
   authToken: process.env.STRIPE_SECRET,
   body: { amount: 1000, currency: "usd" },
 });
+```
 
-// With Schema validation (Recommended)
+### Schema Validation (Recommended)
+
+Always validate external data at the boundary using schema libraries like Zod.
+
+```ts
+import { fetchJSON } from "@/foundation";
 import { z } from "zod";
 
 const UserSchema = z.object({
@@ -37,26 +47,50 @@ const user = await fetchJSON({
   method: "GET",
   schema: UserSchema,
 });
+```
 
-// Legacy: With type guard validation
-interface User { id: string; name: string }
+### Idempotency Keys
 
-const oldUser = await fetchJSON<User>({
-  url: "https://api.example.com/user/1",
-  method: "GET",
-  response: (data): data is User =>
-    typeof data === "object" && data !== null && "id" in data,
+For safe retries of mutations. Useful when retry resilience is enabled to prevent duplicate actions.
+
+```ts
+await fetchJSON({
+  url: "https://api.stripe.com/v1/charges",
+  method: "POST",
+  body: { amount: 1000 },
+  idempotencyKey: "charge_abc123",
 });
 ```
 
-Error behavior:
+### Security: SSRF Safeguards
+
+In server environments, `fetchJSON` includes built-in safeguards against Server-Side Request Forgery. By default, it blocks restricted protocols, private IP ranges, and cloud metadata endpoints.
+
+To allow internal requests, configure the `ssrf` options:
+
+```ts
+await fetchJSON({
+  url: "http://internal-service.local/data",
+  method: "GET",
+  ssrf: {
+    allowList: ["internal-service.local"],
+    blockPrivateIPs: false, // Use only for trusted internal networks
+  }
+});
+```
+
+**Error behavior for `fetchJSON`:**
 - Throws `FetchError` for non-2xx HTTP responses
 - Throws `NetworkError` for connection failures
 - Throws `TimeoutError` if request exceeds configured timeout
 
-## fetchInternal
+---
+
+## 2. fetchInternal (Internal APIs)
 
 Designed for calling internal `/api` routes within the same application. Automatically handles structured `ApiErrorResponse` and preserves request tracing.
+
+**Error behavior:** Throws `ApiResponseError` when server returns structured error.
 
 ```ts
 import { fetchInternal } from "@/foundation";
@@ -75,11 +109,53 @@ await fetchInternal({
 });
 ```
 
-Throws `ApiResponseError` when server returns structured error.
+### Proxy vs Integration Mode
 
-## fetchGraphQL
+Mode affects how upstream errors are interpreted by the policy layer. Mode is defined per call and affects error interpretation only, not infrastructure behavior.
+
+#### Integration Mode (Default)
+We own the contract. Errors indicate bugs. Use when calling internal services as dependencies.
+
+```ts
+await fetchInternal({ url: "/v1/users", method: "POST", body: data });
+// mode: "integration" (implicit)
+```
+- 4xx typically indicates a contract violation (our bug)
+- 5xx = infrastructure failure (backend unavailable or crashed)
+- `shouldReport: true`, `shouldExpose: false` (hide details from user)
+
+#### Proxy Mode
+We're passing user input through. Errors are expected. Use when forwarding responses to the client (e.g. in a pass-through API route).
+
+```ts
+await fetchInternal({
+  url: "/v1/users",
+  method: "POST",
+  body: userInput,
+  mode: "proxy"
+});
+```
+- 4xx = **expected** (user sent bad data)
+- 5xx = infrastructure failure (log as error)
+- `shouldReport: false`, `shouldExpose: true` (show message to user)
+
+#### Policy Comparison
+
+| Aspect | Integration | Proxy |
+|--------|-------------|-------|
+| 4xx meaning | Contract violation | User error |
+| shouldReport | `true` | `false` |
+| shouldExpose | `false` | `true` |
+| logLevel (4xx) | `error` | `info` |
+| logLevel (5xx) | `error` | `error` |
+
+---
+
+## 3. fetchGraphQL (GraphQL APIs)
 
 For GraphQL endpoints. Extracts `data` and throws on GraphQL errors.
+
+**Error behavior:** Throws `GraphQLUpstreamError` when response contains GraphQL errors. Network and HTTP errors are still thrown as `FetchError` / `NetworkError`.
 
 ```ts
 import { fetchGraphQL } from "@/foundation";
@@ -98,26 +174,15 @@ const profile = await fetchGraphQL<{ user: { name: string } }>({
 console.log(profile.user.name);
 ```
 
-Throws `GraphQLUpstreamError` when response contains GraphQL errors. Network and HTTP errors are still thrown as `FetchError` / `NetworkError`.
+---
 
-## Mode: Proxy vs Integration
+## 4. Global Features (All Clients)
 
-`fetchInternal` supports two modes:
+### Request Tracing (`x-request-id`)
 
-```ts
-// Integration mode (default) — we own the contract
-await fetchInternal({ url: "/v1/users", method: "GET" });
+All clients automatically propagate the `x-request-id` header when running in a supported server runtime (e.g. Next.js). Request ID is stored via `AsyncLocalStorage` and handled automatically by Foundation.
 
-// Proxy mode — forwarding upstream responses to user
-await fetchInternal({ url: "/v1/users", method: "GET", mode: "proxy" });
-```
-
-Use integration mode when calling internal services as dependencies.
-Use proxy mode when forwarding responses to the client (e.g. in a pass-through API route).
-
-Detailed comparison and examples: [Proxy vs Integration Mode](./proxy-vs-integration.md)
-
-All clients automatically propagate `x-request-id` header when running in a supported server runtime (e.g. Next.js). Request ID is stored via `AsyncLocalStorage` and handled automatically by Foundation.
+You can also explicitly override it per request:
 
 ```ts
 // Explicit requestId
@@ -125,37 +190,5 @@ await fetchJSON({
   url: "https://api.example.com",
   method: "GET",
   requestId: "custom-trace-id",
-});
-```
-
-## Idempotency Keys
-
-For safe retries of mutations. Useful when retry is enabled.
-
-```ts
-await fetchJSON({
-  url: "https://api.stripe.com/v1/charges",
-  method: "POST",
-  body: { amount: 1000 },
-  idempotencyKey: "charge_abc123",
-});
-```
-
-## Security: SSRF Safeguards
-
-In server environments, `fetchJSON` includes built-in safeguards against Server-Side Request Forgery. By default, it blocks:
-- Restricted protocols (only `http:` and `https:` allowed)
-- Private IP ranges (`127.0.0.1`, `10.*`, `192.168.*`, etc.)
-- Cloud metadata endpoints (`169.254.169.254`)
-
-To allow internal requests, configure the `ssrf` options:
-
-```ts
-await fetchJSON({
-  url: "http://internal-service.local/data",
-  ssrf: {
-    allowList: ["internal-service.local"],
-    blockPrivateIPs: false, // Use only for trusted internal networks
-  }
 });
 ```

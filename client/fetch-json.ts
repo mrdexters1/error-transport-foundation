@@ -35,7 +35,6 @@ const throwError = async (
 export type FetchJSONParams<T> = {
   url: string;
   method: HttpMethod;
-  response?: (arg: unknown) => arg is T;
   handleBadResponse?: (
     response: Response,
     params: { method: string; json: unknown; idempotencyKey?: string },
@@ -97,7 +96,6 @@ export async function fetchJSON<T = unknown>({
   initParams,
   method,
   handleBadResponse = throwError,
-  response,
   schema,
   ignoreResponse = false,
   idempotencyKey,
@@ -219,18 +217,6 @@ export async function fetchJSON<T = unknown>({
     }
   }
 
-  // 2. Legacy Type guard provided (Priority 2)
-  if (response) {
-    if (!response(json)) {
-      return await handleBadResponse(resp, {
-        method,
-        json,
-        idempotencyKey,
-      });
-    }
-    return json;
-  }
-
-  // 3. No guard provided — unsafe cast (Discouraged)
+  // 2. No schema provided — unsafe cast (Discouraged)
   return json as T;
 }
