@@ -46,11 +46,18 @@ export interface LoggerProvider {
   error: (data: LogData) => void;
 }
 
+/**
+ * Default provider uses native console methods with objects directly.
+ * Console methods natively display objects without serialization overhead.
+ * Debug is disabled in production to avoid any overhead.
+ */
+const isProduction = process.env.NODE_ENV === "production";
+
 const defaultProvider: LoggerProvider = {
-  debug: (data) => console.debug(JSON.stringify(data)),
-  info: (data) => console.info(JSON.stringify(data)),
-  warn: (data) => console.warn(JSON.stringify(data)),
-  error: (data) => console.error(JSON.stringify(data)),
+  debug: isProduction ? undefined : (data) => console.debug("[DEBUG]", data),
+  info: (data) => console.info("[INFO]", data),
+  warn: (data) => console.warn("[WARN]", data),
+  error: (data) => console.error("[ERROR]", data),
 };
 
 let currentProvider: LoggerProvider = defaultProvider;
@@ -177,7 +184,6 @@ export const logger = {
         }),
       );
     } catch (err) {
-      // Last resort fallback
       console.error("[Logger] error failed:", err, "Original error:", error);
     }
   },

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fetchJSON } from "../../client/fetch-json";
 import { FetchError } from "../../errors/transport/fetch-error";
 
@@ -79,7 +79,7 @@ describe("fetchJSON", () => {
       });
 
       await expect(
-        fetchJSON({ url: "https://api.test.com/html", method: "GET" })
+        fetchJSON({ url: "https://api.test.com/html", method: "GET" }),
       ).rejects.toThrow(FetchError);
     });
 
@@ -93,7 +93,7 @@ describe("fetchJSON", () => {
       });
 
       await expect(
-        fetchJSON({ url: "https://api.test.com/no-type", method: "GET" })
+        fetchJSON({ url: "https://api.test.com/no-type", method: "GET" }),
       ).rejects.toThrow(FetchError);
     });
 
@@ -144,7 +144,7 @@ describe("fetchJSON", () => {
           url: "https://api.test.com/data",
           method: "GET",
           response: isValid,
-        })
+        }),
       ).rejects.toThrow(FetchError);
     });
   });
@@ -171,7 +171,7 @@ describe("fetchJSON", () => {
 
       expect(handleBadResponse).toHaveBeenCalledWith(
         mockResponse,
-        expect.objectContaining({ method: "POST" })
+        expect.objectContaining({ method: "POST" }),
       );
       expect(result).toEqual({ handled: true });
     });
@@ -187,7 +187,7 @@ describe("fetchJSON", () => {
       });
 
       await expect(
-        fetchJSON({ url: "https://api.test.com/missing", method: "GET" })
+        fetchJSON({ url: "https://api.test.com/missing", method: "GET" }),
       ).rejects.toThrow(FetchError);
     });
   });
@@ -205,10 +205,12 @@ describe("fetchJSON", () => {
     });
 
     it("network failure throws Error", async () => {
-      global.fetch = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+      global.fetch = vi
+        .fn()
+        .mockRejectedValue(new TypeError("Failed to fetch"));
 
       await expect(
-        fetchJSON({ url: "https://api.test.com/data", method: "GET" })
+        fetchJSON({ url: "https://api.test.com/data", method: "GET" }),
       ).rejects.toBeInstanceOf(Error);
     });
   });

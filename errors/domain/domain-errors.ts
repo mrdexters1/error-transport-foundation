@@ -66,3 +66,17 @@ export class InvalidParamError extends DomainError {
     super(message, options);
   }
 }
+
+/**
+ * Error when request body exceeds size limit (status 413).
+ */
+export class PayloadTooLargeError extends DomainError {
+  readonly code = ErrorCodes.PAYLOAD_TOO_LARGE;
+
+  constructor(
+    message = "Request body too large",
+    options?: { cause?: unknown },
+  ) {
+    super(message, options);
+  }
+}

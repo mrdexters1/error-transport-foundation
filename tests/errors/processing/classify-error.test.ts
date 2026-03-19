@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { classifyError } from "../../../errors/processing/classify-error";
 import { InfrastructureError } from "../../../errors/core/base-error";
+import { ErrorCodes } from "../../../errors/core/error-codes";
+import { NotFoundError } from "../../../errors/domain/domain-errors";
+import { ValidationError } from "../../../errors/domain/validation-error";
+import { classifyError } from "../../../errors/processing/classify-error";
 import { NetworkError } from "../../../errors/transport/network-error";
 import { UnexpectedError } from "../../../errors/unexpected/unexpected-error";
-import { ValidationError } from "../../../errors/domain/validation-error";
-import { NotFoundError } from "../../../errors/domain/domain-errors";
-import { ErrorCodes } from "../../../errors/core/error-codes";
 
 describe("classifyError", () => {
   describe("BaseError passed in → returns same instance", () => {
@@ -139,7 +139,9 @@ describe("classifyError", () => {
     });
 
     it("preserves cause in NetworkError from AbortError", () => {
-      const original = Object.assign(new Error("Aborted"), { name: "AbortError" });
+      const original = Object.assign(new Error("Aborted"), {
+        name: "AbortError",
+      });
       const result = classifyError(original);
       expect(result.cause).toBe(original);
     });

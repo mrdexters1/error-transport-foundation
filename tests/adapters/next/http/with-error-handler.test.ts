@@ -1,5 +1,5 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../../../../adapters/next/init", () => ({
   ensureFoundationInitialized: vi.fn(),
@@ -21,18 +21,27 @@ vi.mock("../../../../core/runtime/request-context.server", () => ({
 
 import { withErrorHandler } from "../../../../adapters/next/http/with-error-handler";
 import { logger } from "../../../../core/logger/logger";
-import { NotFoundError, ForbiddenError } from "../../../../errors/domain/domain-errors";
+import {
+  ForbiddenError,
+  NotFoundError,
+} from "../../../../errors/domain/domain-errors";
 import { ValidationError } from "../../../../errors/domain/validation-error";
+import { HttpStatus } from "../../../../errors/transport/http-status";
 import { NetworkError } from "../../../../errors/transport/network-error";
 import { UnexpectedError } from "../../../../errors/unexpected/unexpected-error";
-import { HttpStatus } from "../../../../errors/transport/http-status";
 
 describe("withErrorHandler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  const createRequest = (opts: { url?: string; method?: string; headers?: Record<string, string> } = {}) => {
+  const createRequest = (
+    opts: {
+      url?: string;
+      method?: string;
+      headers?: Record<string, string>;
+    } = {},
+  ) => {
     const headers = new Headers(opts.headers);
     return {
       url: opts.url ?? "https://test.com/api/test",
@@ -56,7 +65,9 @@ describe("withErrorHandler", () => {
     });
 
     it("does not log on success", async () => {
-      const handler = vi.fn().mockResolvedValue(NextResponse.json({ ok: true }));
+      const handler = vi
+        .fn()
+        .mockResolvedValue(NextResponse.json({ ok: true }));
       await withErrorHandler(handler)(createRequest());
 
       expect(logger.error).not.toHaveBeenCalled();
@@ -66,7 +77,9 @@ describe("withErrorHandler", () => {
 
   describe("thrown ApplicationError → correct HttpError", () => {
     it("UnexpectedError → 500", async () => {
-      const handler = vi.fn().mockRejectedValue(new UnexpectedError({ cause: new Error("bug") }));
+      const handler = vi
+        .fn()
+        .mockRejectedValue(new UnexpectedError({ cause: new Error("bug") }));
       const response = await withErrorHandler(handler)(createRequest());
       const body = await response.json();
 
@@ -77,7 +90,9 @@ describe("withErrorHandler", () => {
 
   describe("thrown InfrastructureError → 5xx", () => {
     it("NetworkError → 502", async () => {
-      const handler = vi.fn().mockRejectedValue(new NetworkError("Connection failed"));
+      const handler = vi
+        .fn()
+        .mockRejectedValue(new NetworkError("Connection failed"));
       const response = await withErrorHandler(handler)(createRequest());
       const body = await response.json();
 
@@ -107,7 +122,9 @@ describe("withErrorHandler", () => {
 
   describe("Domain errors mapped correctly", () => {
     it("NotFoundError → 404", async () => {
-      const handler = vi.fn().mockRejectedValue(new NotFoundError("User not found"));
+      const handler = vi
+        .fn()
+        .mockRejectedValue(new NotFoundError("User not found"));
       const response = await withErrorHandler(handler)(createRequest());
       const body = await response.json();
 
@@ -117,7 +134,9 @@ describe("withErrorHandler", () => {
     });
 
     it("ForbiddenError → 403", async () => {
-      const handler = vi.fn().mockRejectedValue(new ForbiddenError("Access denied"));
+      const handler = vi
+        .fn()
+        .mockRejectedValue(new ForbiddenError("Access denied"));
       const response = await withErrorHandler(handler)(createRequest());
       const body = await response.json();
 
@@ -126,13 +145,18 @@ describe("withErrorHandler", () => {
     });
 
     it("ValidationError → 422", async () => {
-      const handler = vi.fn().mockRejectedValue(new ValidationError({ email: "Invalid" }));
+      const handler = vi
+        .fn()
+        .mockRejectedValue(new ValidationError({ email: "Invalid" }));
       const response = await withErrorHandler(handler)(createRequest());
       const body = await response.json();
 
       expect(response.status).toBe(HttpStatus.UNPROCESSABLE_CONTENT);
       expect(body.code).toBe("VALIDATION_ERROR");
-      expect(body.meta).toEqual({ type: "VALIDATION", fields: { email: "Invalid" } });
+      expect(body.meta).toEqual({
+        type: "VALIDATION",
+        fields: { email: "Invalid" },
+      });
     });
   });
 
@@ -140,7 +164,7 @@ describe("withErrorHandler", () => {
     it("uses x-request-id from header", async () => {
       const handler = vi.fn().mockRejectedValue(new NotFoundError("Not found"));
       const response = await withErrorHandler(handler)(
-        createRequest({ headers: { "x-request-id": "provided-id" } })
+        createRequest({ headers: { "x-request-id": "provided-id" } }),
       );
       const body = await response.json();
 
@@ -168,7 +192,7 @@ describe("withErrorHandler", () => {
         expect.objectContaining({
           code: "NETWORK_ERROR",
           layer: "infrastructure",
-        })
+        }),
       );
     });
 
@@ -182,7 +206,7 @@ describe("withErrorHandler", () => {
         expect.objectContaining({
           code: "NOT_FOUND",
           layer: "domain",
-        })
+        }),
       );
     });
 
@@ -196,14 +220,16 @@ describe("withErrorHandler", () => {
         expect.objectContaining({
           code: "VALIDATION_ERROR",
           layer: "domain",
-        })
+        }),
       );
     });
   });
 
   describe("policy.shouldExpose = false → message stripped", () => {
     it("infrastructure error message is masked", async () => {
-      const handler = vi.fn().mockRejectedValue(new NetworkError("postgres://user:secret@host"));
+      const handler = vi
+        .fn()
+        .mockRejectedValue(new NetworkError("postgres://user:secret@host"));
       const response = await withErrorHandler(handler)(createRequest());
       const body = await response.json();
 
@@ -213,7 +239,11 @@ describe("withErrorHandler", () => {
     });
 
     it("application error message is masked", async () => {
-      const handler = vi.fn().mockRejectedValue(new UnexpectedError({ cause: new Error("DB secret") }));
+      const handler = vi
+        .fn()
+        .mockRejectedValue(
+          new UnexpectedError({ cause: new Error("DB secret") }),
+        );
       const response = await withErrorHandler(handler)(createRequest());
       const body = await response.json();
 
@@ -221,7 +251,9 @@ describe("withErrorHandler", () => {
     });
 
     it("domain error message is exposed", async () => {
-      const handler = vi.fn().mockRejectedValue(new NotFoundError("User not found"));
+      const handler = vi
+        .fn()
+        .mockRejectedValue(new NotFoundError("User not found"));
       const response = await withErrorHandler(handler)(createRequest());
       const body = await response.json();
 

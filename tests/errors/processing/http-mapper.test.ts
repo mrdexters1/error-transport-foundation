@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { mapToHttpError } from "../../../errors/processing/http-mapper";
-import { getErrorPolicy } from "../../../errors/processing/error-policy";
-import { ValidationError } from "../../../errors/domain/validation-error";
 import {
-  NotFoundError,
   ForbiddenError,
+  NotFoundError,
   UnauthorizedError,
 } from "../../../errors/domain/domain-errors";
+import { ValidationError } from "../../../errors/domain/validation-error";
+import { getErrorPolicy } from "../../../errors/processing/error-policy";
+import { mapToHttpError } from "../../../errors/processing/http-mapper";
+import { HttpStatus } from "../../../errors/transport/http-status";
 import { NetworkError } from "../../../errors/transport/network-error";
 import { UnexpectedError } from "../../../errors/unexpected/unexpected-error";
-import { HttpStatus } from "../../../errors/transport/http-status";
 
 describe("mapToHttpError", () => {
   describe("Domain → 4xx", () => {
@@ -99,7 +99,10 @@ describe("mapToHttpError", () => {
     });
 
     it("exposes validation message", () => {
-      const error = new ValidationError({ email: "Invalid" }, "Validation failed");
+      const error = new ValidationError(
+        { email: "Invalid" },
+        "Validation failed",
+      );
       const policy = getErrorPolicy(error);
       const httpError = mapToHttpError(error, policy);
 

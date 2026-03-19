@@ -29,8 +29,12 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any);
 
-      expect(form.setError).toHaveBeenCalledWith("email", { message: "Invalid email" });
-      expect(form.setError).toHaveBeenCalledWith("name", { message: "Required" });
+      expect(form.setError).toHaveBeenCalledWith("email", {
+        message: "Invalid email",
+      });
+      expect(form.setError).toHaveBeenCalledWith("name", {
+        message: "Required",
+      });
       expect(form.setError).toHaveBeenCalledTimes(2);
     });
   });
@@ -46,7 +50,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any);
 
-      expect(form.setError).toHaveBeenCalledWith("root", { message: "Form is invalid" });
+      expect(form.setError).toHaveBeenCalledWith("root", {
+        message: "Form is invalid",
+      });
     });
 
     it("treats empty validationFields object as root", () => {
@@ -59,7 +65,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any);
 
-      expect(form.setError).toHaveBeenCalledWith("root", { message: "Invalid" });
+      expect(form.setError).toHaveBeenCalledWith("root", {
+        message: "Invalid",
+      });
     });
   });
 
@@ -73,7 +81,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any);
 
-      expect(form.setError).toHaveBeenCalledWith("root", { message: "Session expired" });
+      expect(form.setError).toHaveBeenCalledWith("root", {
+        message: "Session expired",
+      });
     });
   });
 
@@ -85,7 +95,9 @@ describe("applyFormErrors", () => {
         message: "Session expired",
       });
 
-      const result = applyFormErrors(ui, form as any, { applyAuthErrors: false });
+      const result = applyFormErrors(ui, form as any, {
+        applyAuthErrors: false,
+      });
 
       expect(result).toBe(false);
       expect(form.setError).not.toHaveBeenCalled();
@@ -102,7 +114,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any);
 
-      expect(form.setError).toHaveBeenCalledWith("root", { message: "Service unavailable" });
+      expect(form.setError).toHaveBeenCalledWith("root", {
+        message: "Service unavailable",
+      });
     });
 
     it("RATE_LIMIT → root", () => {
@@ -114,7 +128,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any);
 
-      expect(form.setError).toHaveBeenCalledWith("root", { message: "Too many requests" });
+      expect(form.setError).toHaveBeenCalledWith("root", {
+        message: "Too many requests",
+      });
     });
 
     it("UNEXPECTED → root", () => {
@@ -126,7 +142,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any);
 
-      expect(form.setError).toHaveBeenCalledWith("root", { message: "An error occurred" });
+      expect(form.setError).toHaveBeenCalledWith("root", {
+        message: "An error occurred",
+      });
     });
   });
 
@@ -148,8 +166,12 @@ describe("applyFormErrors", () => {
         } as any,
       });
 
-      expect(form.setError).toHaveBeenCalledWith("email", { message: "Invalid email" });
-      expect(form.setError).toHaveBeenCalledWith("name", { message: "Required" });
+      expect(form.setError).toHaveBeenCalledWith("email", {
+        message: "Invalid email",
+      });
+      expect(form.setError).toHaveBeenCalledWith("name", {
+        message: "Required",
+      });
     });
 
     it("uses original field when no mapping", () => {
@@ -161,7 +183,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any, { fieldMap: {} });
 
-      expect(form.setError).toHaveBeenCalledWith("unmapped", { message: "Error" });
+      expect(form.setError).toHaveBeenCalledWith("unmapped", {
+        message: "Error",
+      });
     });
   });
 
@@ -175,7 +199,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any, { fallbackField: "email" as any });
 
-      expect(form.setError).toHaveBeenCalledWith("email", { message: "Email already taken" });
+      expect(form.setError).toHaveBeenCalledWith("email", {
+        message: "Email already taken",
+      });
     });
 
     it("uses root when no fallbackField", () => {
@@ -187,7 +213,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any);
 
-      expect(form.setError).toHaveBeenCalledWith("root", { message: "Resource not found" });
+      expect(form.setError).toHaveBeenCalledWith("root", {
+        message: "Resource not found",
+      });
     });
 
     it("uses custom rootKey", () => {
@@ -199,7 +227,9 @@ describe("applyFormErrors", () => {
 
       applyFormErrors(ui, form as any, { rootKey: "root.server" });
 
-      expect(form.setError).toHaveBeenCalledWith("root.server", { message: "Error" });
+      expect(form.setError).toHaveBeenCalledWith("root.server", {
+        message: "Error",
+      });
     });
   });
 

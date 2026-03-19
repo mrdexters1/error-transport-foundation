@@ -17,6 +17,7 @@ export const DOMAIN_STATUS_MAP: Partial<Record<ErrorCode, HttpStatusCode>> = {
   [ErrorCodes.UNAUTHORIZED]: HttpStatus.UNAUTHORIZED,
   [ErrorCodes.METHOD_NOT_ALLOWED]: HttpStatus.METHOD_NOT_ALLOWED,
   [ErrorCodes.INVALID_PARAM]: HttpStatus.UNPROCESSABLE_CONTENT,
+  [ErrorCodes.PAYLOAD_TOO_LARGE]: HttpStatus.PAYLOAD_TOO_LARGE,
   // Future domain codes go here:
   // [ErrorCodes.INSUFFICIENT_FUNDS]: HttpStatus.PAYMENT_REQUIRED,
 };

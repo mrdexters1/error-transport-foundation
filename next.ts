@@ -11,3 +11,8 @@
 
 export { withActionHandler } from "./adapters/next/actions/with-action-handler";
 export { withErrorHandler } from "./adapters/next/http/with-error-handler";
+export { ensureFoundationInitialized } from "./adapters/next/init";
+export {
+  initializeShutdownHandlers,
+  registerShutdownCallback,
+} from "./adapters/next/shutdown";

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  toApiErrorResponse,
   isApiErrorResponse,
+  toApiErrorResponse,
 } from "../../../errors/processing/error-response";
 import { HttpError } from "../../../errors/processing/http-error";
 import { HttpStatus } from "../../../errors/transport/http-status";

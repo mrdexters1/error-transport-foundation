@@ -4,7 +4,7 @@ import { ErrorCodes } from "../../errors/core/error-codes";
 import type { ApiErrorResponse } from "../../errors/processing/api-error.types";
 
 const createApiError = (
-  overrides: Partial<ApiErrorResponse> = {}
+  overrides: Partial<ApiErrorResponse> = {},
 ): ApiErrorResponse => ({
   apiVersion: "1.0",
   timestamp: new Date().toISOString(),
@@ -17,7 +17,10 @@ const createApiError = (
 describe("analyzeError", () => {
   describe("ErrorKind mapping", () => {
     it("maps 401 to AUTH", () => {
-      const error = createApiError({ status: 401, code: ErrorCodes.UNAUTHORIZED });
+      const error = createApiError({
+        status: 401,
+        code: ErrorCodes.UNAUTHORIZED,
+      });
       expect(analyzeError(error).kind).toBe("AUTH");
     });
 
@@ -47,9 +50,15 @@ describe("analyzeError", () => {
     });
 
     it("maps 502/503/504 to DEPENDENCY", () => {
-      expect(analyzeError(createApiError({ status: 502 })).kind).toBe("DEPENDENCY");
-      expect(analyzeError(createApiError({ status: 503 })).kind).toBe("DEPENDENCY");
-      expect(analyzeError(createApiError({ status: 504 })).kind).toBe("DEPENDENCY");
+      expect(analyzeError(createApiError({ status: 502 })).kind).toBe(
+        "DEPENDENCY",
+      );
+      expect(analyzeError(createApiError({ status: 503 })).kind).toBe(
+        "DEPENDENCY",
+      );
+      expect(analyzeError(createApiError({ status: 504 })).kind).toBe(
+        "DEPENDENCY",
+      );
     });
 
     it("maps infrastructure layer to DEPENDENCY", () => {
@@ -96,10 +105,10 @@ describe("analyzeError", () => {
         createApiError({
           code: ErrorCodes.VALIDATION_ERROR,
           meta: { type: "VALIDATION", fields: { name: "Required" } },
-        })
+        }),
       );
       const withoutFields = analyzeError(
-        createApiError({ code: ErrorCodes.VALIDATION_ERROR })
+        createApiError({ code: ErrorCodes.VALIDATION_ERROR }),
       );
 
       expect(hasFieldErrors(withFields)).toBe(true);
@@ -140,7 +149,10 @@ describe("analyzeError", () => {
 
   describe("Unknown → UNEXPECTED", () => {
     it("maps 500 to UNEXPECTED", () => {
-      const error = createApiError({ status: 500, code: ErrorCodes.UNEXPECTED_ERROR });
+      const error = createApiError({
+        status: 500,
+        code: ErrorCodes.UNEXPECTED_ERROR,
+      });
       expect(analyzeError(error).kind).toBe("UNEXPECTED");
     });
 

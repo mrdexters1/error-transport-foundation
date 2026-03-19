@@ -9,16 +9,16 @@ import { mapToHttpError } from "../../../errors/processing/http-mapper";
 
 import { ensureFoundationInitialized } from "../init";
 
-export const withErrorHandler = (
-  handler: (req: NextRequest) => Promise<NextResponse>,
+export const withErrorHandler = <TArgs extends unknown[]>(
+  handler: (req: NextRequest, ...args: TArgs) => Promise<NextResponse>,
 ) => {
-  return async (req: NextRequest): Promise<NextResponse> => {
+  return async (req: NextRequest, ...args: TArgs): Promise<NextResponse> => {
     ensureFoundationInitialized();
     const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
 
     return requestContext.run({ requestId }, async () => {
       try {
-        return await handler(req);
+        return await handler(req, ...args);
       } catch (err) {
         return handleError(err, req, requestId);
       }

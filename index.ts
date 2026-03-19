@@ -61,6 +61,7 @@ export {
   InvalidParamError,
   MethodNotAllowedError,
   NotFoundError,
+  PayloadTooLargeError,
   UnauthorizedError,
 } from "./errors/domain/domain-errors";
 export { ValidationError } from "./errors/domain/validation-error";
@@ -102,3 +103,4 @@ export type { HttpMethod } from "./http/http-method";
 // HTTP Helpers
 // ============================================================================
 export { HTTP_METHODS } from "./http/http-method";
+export { safeParseJson } from "./http/safe-parse-json";

@@ -76,7 +76,8 @@ export async function fetchJSON<T = unknown>({
   ignoreResponse = false,
   idempotencyKey,
 }: FetchJSONParams<T>): Promise<T> {
-  const isMultipartFormData = body instanceof FormData;
+  const isFormBody =
+    body instanceof FormData || body instanceof URLSearchParams;
 
   // Auto-inject requestId from resolver if not provided explicitly (Point 1)
   const requestId = explicitRequestId || requestIdResolver();
@@ -92,16 +93,16 @@ export async function fetchJSON<T = unknown>({
       ["POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase())
         ? { "Idempotency-Key": idempotencyKey }
         : undefined),
-      ...(isMultipartFormData
-        ? undefined
-        : { "Content-Type": "application/json" }),
+      ...(isFormBody ? undefined : { "Content-Type": "application/json" }),
       ...headers,
     },
-    body: isMultipartFormData
-      ? body
+    body: isFormBody
+      ? (body as BodyInit)
       : body &&
           ["POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase())
-        ? JSON.stringify(body)
+        ? typeof body === "string"
+          ? body
+          : JSON.stringify(body)
         : undefined,
   });
 
