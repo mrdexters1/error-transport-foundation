@@ -8,6 +8,7 @@
   - Simplified public API in `foundation/next` to improve developer experience (DX).
   - Merged shutdown signal registration into a single automated flow.
   - **Contract Safety**: Added optional `schema` validation to `fetchJSON` (compatible with Zod). This prevents runtime failures in UI due to backend contract changes.
+  - **Security**: Implemented **SSRF Safeguards** in `fetchJSON`. Protects server-side requests by blocking private IP ranges, cloud metadata endpoints, and restricted protocols by default.
 
 ### Added
 - `autoShutdown` helper in `foundation/next` for easy one-liner resource cleanup (e.g. database, redis).

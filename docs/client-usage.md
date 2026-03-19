@@ -140,3 +140,22 @@ await fetchJSON({
   idempotencyKey: "charge_abc123",
 });
 ```
+
+## Security: SSRF Safeguards
+
+In server environments, `fetchJSON` includes built-in safeguards against Server-Side Request Forgery. By default, it blocks:
+- Restricted protocols (only `http:` and `https:` allowed)
+- Private IP ranges (`127.0.0.1`, `10.*`, `192.168.*`, etc.)
+- Cloud metadata endpoints (`169.254.169.254`)
+
+To allow internal requests, configure the `ssrf` options:
+
+```ts
+await fetchJSON({
+  url: "http://internal-service.local/data",
+  ssrf: {
+    allowList: ["internal-service.local"],
+    blockPrivateIPs: false, // Use only for trusted internal networks
+  }
+});
+```

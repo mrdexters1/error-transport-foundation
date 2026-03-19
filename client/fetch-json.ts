@@ -1,4 +1,5 @@
 import { FetchError } from "../errors/transport/fetch-error";
+import { NetworkError } from "../errors/transport/network-error";
 import type { HttpMethod } from "../http/http-method";
 import { isServer } from "../core/runtime/runtime";
 
@@ -49,6 +50,15 @@ export type FetchJSONParams<T> = {
   schema?: { parse: (data: unknown) => T };
   /** Optional key for idempotent mutations (POST/PUT/PATCH) */
   idempotencyKey?: string;
+  /** Security: SSRF safeguards for server-side requests */
+  ssrf?: {
+    /** Allow only specific hostnames (e.g. ['api.stripe.com']) */
+    allowList?: string[];
+    /** Block requests to private network / metadata IPs (default: true on server) */
+    blockPrivateIPs?: boolean;
+    /** Allowed protocols (default: ['http:', 'https:']) */
+    allowedProtocols?: string[];
+  };
 };
 
 /**
@@ -91,9 +101,52 @@ export async function fetchJSON<T = unknown>({
   schema,
   ignoreResponse = false,
   idempotencyKey,
+  ssrf,
 }: FetchJSONParams<T>): Promise<T> {
   const isFormBody =
     body instanceof FormData || body instanceof URLSearchParams;
+
+  // SSRF Protection (Server-side only)
+  if (isServer()) {
+    try {
+      const parsedUrl = new URL(url);
+      const options = {
+        allowedProtocols: ssrf?.allowedProtocols || ["http:", "https:"],
+        blockPrivateIPs: ssrf?.blockPrivateIPs ?? true,
+        allowList: ssrf?.allowList,
+      };
+
+      // 1. Protocol check
+      if (!options.allowedProtocols.includes(parsedUrl.protocol)) {
+        throw new Error(`Forbidden protocol: ${parsedUrl.protocol}`);
+      }
+
+      // 2. AllowList check (if provided)
+      if (options.allowList && !options.allowList.includes(parsedUrl.hostname)) {
+        throw new Error(`Hostname not in allowList: ${parsedUrl.hostname}`);
+      }
+
+      // 3. Private IP / Metadata check (Best effort via hostname)
+      if (options.blockPrivateIPs) {
+        const privateRanges = [
+          "localhost",
+          "127.0.0.1",
+          "169.254.169.254", // Cloud metadata
+          "10.", // Class A
+          "172.16.", // Class B
+          "192.168.", // Class C
+        ];
+        if (privateRanges.some((range) => parsedUrl.hostname.startsWith(range))) {
+          throw new Error(`Restricted IP/Hostname blocked: ${parsedUrl.hostname}`);
+        }
+      }
+    } catch (err) {
+      throw new NetworkError(
+        `SSRF Blocked: ${err instanceof Error ? err.message : "Invalid URL"}`,
+        { cause: err },
+      );
+    }
+  }
 
   // Auto-inject requestId from resolver if not provided explicitly (Point 1)
   const requestId = explicitRequestId || requestIdResolver();
