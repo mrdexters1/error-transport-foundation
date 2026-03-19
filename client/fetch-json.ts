@@ -1,5 +1,5 @@
-import { FetchError } from "../errors/transport/fetch-error";
-import { NetworkError } from "../errors/transport/network-error";
+import { FetchError } from "../errors/infrastructure/fetch-error";
+import { NetworkError } from "../errors/infrastructure/network-error";
 import type { HttpMethod } from "../http/http-method";
 import { isServer } from "../core/runtime/runtime";
 

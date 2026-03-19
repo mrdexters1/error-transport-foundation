@@ -31,15 +31,15 @@ Output (JSON):
 
 Default policy determines log level based on error type:
 
-| Error Type | Log Level |
-|------------|-----------|
-| ValidationError | `info` |
-| DomainError | `warn` |
-| InfrastructureError | `error` |
-| ApplicationError | `error` |
-| UnexpectedError | `error` |
-| ApiResponseError (proxy, 4xx) | `info` |
-| ApiResponseError (integration) | `error` |
+| Error Type | Log Level | Note |
+|------------|-----------|------|
+| ValidationError | `info` | User input error (a specialized DomainError) |
+| DomainError | `warn` | Business rule violation |
+| InfrastructureError | `error` | External system failure (formally Infrastructure) |
+| ApplicationError | `error` | Programmer bug |
+| UnexpectedError | `error` | Catch-all for unknown errors |
+| ApiResponseError (proxy, 4xx) | `info` | Forwarded user error |
+| ApiResponseError (integration) | `error` | Internal service contract failure |
 
 ## Custom Provider
 

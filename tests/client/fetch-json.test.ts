@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fetchJSON } from "../../client/fetch-json";
-import { FetchError } from "../../errors/transport/fetch-error";
+import { FetchError } from "../../errors/infrastructure/fetch-error";
 
 describe("fetchJSON", () => {
   const originalFetch = global.fetch;

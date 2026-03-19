@@ -15,7 +15,7 @@ foundation/
 ├── errors/
 │   ├── core/             # BaseError, error codes
 │   ├── domain/           # Business logic errors
-│   ├── transport/        # HTTP/network errors
+│   ├── infrastructure/   # External system errors (formally infrastructure)
 │   ├── processing/       # classify → policy → map → response
 │   └── unexpected/       # Catch-all for unknown errors
 ├── client/               # HTTP clients (fetchJSON, fetchInternal, fetchGraphQL)
@@ -33,17 +33,19 @@ core/
   ↑
 errors/*
   ↑
+http/resilience
+  ↑
 client/
   ↑
 adapters/next
 ```
 
 Key rules:
-- `core/` has no dependencies on other foundation modules
-- `client/` uses `errors/transport` for error types
-- `errors/processing` does not depend on `adapters/`
-- `adapters/` is the only layer with side effects (logging, I/O)
-- `errors/*` includes core, domain, transport, processing, and unexpected layers.
+- `core/` has no dependencies on other foundation modules.
+- `client/` uses `errors/infrastructure` for external failure types.
+- `errors/processing` is framework-independent and pure.
+- `http/resilience` provides composable wrappers for HTTP clients.
+- `adapters/` is the only layer with side effects (logging, I/O).
 
 
 ## Why Processing Is Pure
@@ -54,12 +56,7 @@ The error processing pipeline (`classify → policy → map → response`) is pu
 - No I/O
 - Fully testable
 
-```ts
-const baseError = classifyError(err);
-const policy = getErrorPolicy(baseError);
-const httpError = mapToHttpError(baseError, policy);
-const response = toApiErrorResponse(httpError, requestId);
-```
+See [Processing Pipeline](./processing-pipeline.md) for a detailed breakdown.
 
 Side effects (logging, reporting) are handled by the adapter after the pipeline completes.
 

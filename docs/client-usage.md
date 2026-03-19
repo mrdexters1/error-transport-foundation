@@ -113,9 +113,9 @@ await fetchInternal({ url: "/v1/users", method: "GET", mode: "proxy" });
 ```
 
 Use integration mode when calling internal services as dependencies.
-Use proxy mode when forwarding responses to the client.
+Use proxy mode when forwarding responses to the client (e.g. in a pass-through API route).
 
-See [proxy-vs-integration.md](./proxy-vs-integration.md) for details.
+Detailed comparison and examples: [Proxy vs Integration Mode](./proxy-vs-integration.md)
 
 All clients automatically propagate `x-request-id` header when running in a supported server runtime (e.g. Next.js). Request ID is stored via `AsyncLocalStorage` and handled automatically by Foundation.
 

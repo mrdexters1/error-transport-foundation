@@ -1,8 +1,8 @@
-import type { HttpStatusCode } from "../transport/http-status";
+import type { HttpStatusCode } from "../infrastructure/http-status";
 import type { ApiErrorMeta } from "./api-error.types";
 
 /**
- * Transport-level error model.
+ * Infrastructure-level error model.
  * A "dumb" DTO that carries data to the final response.
  * No business logic or decisions are made here.
  */

@@ -37,7 +37,7 @@ function handleError(
   // 2. Determine operational policy
   const policy = getErrorPolicy(baseError);
 
-  // 3. Map to transport-specific HttpError
+  // 3. Map to infrastructure-specific HttpError
   const httpError = mapToHttpError(baseError, policy);
 
   // 4. Structured logging based on policy

@@ -81,19 +81,19 @@ export {
   toUiError,
 } from "./errors/processing/error-response";
 export { mapToHttpError } from "./errors/processing/http-mapper";
-export { ApiResponseError } from "./errors/transport/api-response-error";
+export { ApiResponseError } from "./errors/infrastructure/api-response-error";
 // ============================================================================
-// Transport Errors
+// Infrastructure Errors
 // ============================================================================
-export { FetchError } from "./errors/transport/fetch-error";
-export { GraphQLUpstreamError } from "./errors/transport/graphql-error";
-export type { HttpStatusCode } from "./errors/transport/http-status";
-export { HttpStatus } from "./errors/transport/http-status";
-export { NetworkError } from "./errors/transport/network-error";
+export { FetchError } from "./errors/infrastructure/fetch-error";
+export { GraphQLUpstreamError } from "./errors/infrastructure/graphql-error";
+export type { HttpStatusCode } from "./errors/infrastructure/http-status";
+export { HttpStatus } from "./errors/infrastructure/http-status";
+export { NetworkError } from "./errors/infrastructure/network-error";
 export {
   CircuitOpenError,
   TimeoutError,
-} from "./errors/transport/resilience-errors";
+} from "./errors/infrastructure/resilience-errors";
 // ============================================================================
 // Unexpected Errors
 // ============================================================================

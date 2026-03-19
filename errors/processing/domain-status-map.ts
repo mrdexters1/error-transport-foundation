@@ -1,7 +1,7 @@
 import type { ErrorCode } from "../core/error-codes";
 import { ErrorCodes } from "../core/error-codes";
-import type { HttpStatusCode } from "../transport/http-status";
-import { HttpStatus } from "../transport/http-status";
+import type { HttpStatusCode } from "../infrastructure/http-status";
+import { HttpStatus } from "../infrastructure/http-status";
 
 /**
  * Registry for mapping specific domain codes to HTTP statuses.

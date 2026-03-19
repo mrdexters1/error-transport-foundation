@@ -12,7 +12,7 @@ The answer depends on context.
 
 ## Two Modes
 
-Mode is defined per call and affects error interpretation only, not transport behavior.
+Mode is defined per call and affects error interpretation only, not infrastructure behavior.
 
 ### Integration Mode (Default)
 

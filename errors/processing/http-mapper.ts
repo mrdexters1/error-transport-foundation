@@ -1,18 +1,18 @@
 import type { BaseError } from "../core/base-error";
 import type { ErrorCode } from "../core/error-codes";
 import { ValidationError } from "../domain/validation-error";
-import { ApiResponseError } from "../transport/api-response-error";
-import { FetchError } from "../transport/fetch-error";
-import type { HttpStatusCode } from "../transport/http-status";
-import { HttpStatus } from "../transport/http-status";
-import { NetworkError } from "../transport/network-error";
-import { CircuitOpenError, TimeoutError } from "../transport/resilience-errors";
+import { ApiResponseError } from "../infrastructure/api-response-error";
+import { FetchError } from "../infrastructure/fetch-error";
+import type { HttpStatusCode } from "../infrastructure/http-status";
+import { HttpStatus } from "../infrastructure/http-status";
+import { NetworkError } from "../infrastructure/network-error";
+import { CircuitOpenError, TimeoutError } from "../infrastructure/resilience-errors";
 import { DOMAIN_STATUS_MAP } from "./domain-status-map";
 import type { ErrorPolicy } from "./error-policy";
 import { HttpError } from "./http-error";
 
 /**
- * Maps BaseError to HttpError for transport.
+ * Maps BaseError to HttpError for infrastructure.
  * Anti-Leak: only exposes details if policy.shouldExpose is true.
  */
 export const mapToHttpError = (
@@ -40,7 +40,7 @@ export const mapToHttpError = (
 
 /**
  * Determines HTTP status for a BaseError.
- * Order: DomainError → ApiResponseError → TransportError → Fallbacks
+ * Order: DomainError → ApiResponseError → InfrastructureError → Fallbacks
  */
 const determineStatus = (error: BaseError): HttpStatusCode => {
   // 1. ValidationError (special domain case)
@@ -67,7 +67,7 @@ const determineStatus = (error: BaseError): HttpStatusCode => {
       : HttpStatus.BAD_GATEWAY;
   }
 
-  // 4. Transport/Infrastructure errors
+  // 4. Infrastructure/Infrastructure errors
   if (error instanceof NetworkError) {
     return HttpStatus.BAD_GATEWAY;
   }

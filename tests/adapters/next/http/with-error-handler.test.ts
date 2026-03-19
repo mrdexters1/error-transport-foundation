@@ -26,8 +26,8 @@ import {
   NotFoundError,
 } from "../../../../errors/domain/domain-errors";
 import { ValidationError } from "../../../../errors/domain/validation-error";
-import { HttpStatus } from "../../../../errors/transport/http-status";
-import { NetworkError } from "../../../../errors/transport/network-error";
+import { HttpStatus } from "../../../../errors/infrastructure/http-status";
+import { NetworkError } from "../../../../errors/infrastructure/network-error";
 import { UnexpectedError } from "../../../../errors/unexpected/unexpected-error";
 
 describe("withErrorHandler", () => {

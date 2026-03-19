@@ -45,7 +45,7 @@ export const withActionHandler = <TArgs extends unknown[], TResult>(
         // 4. Determine operational policy
         const policy = getErrorPolicy(baseError);
 
-        // 5. Map to transport-specific HttpError
+        // 5. Map to infrastructure-specific HttpError
         const httpError = mapToHttpError(baseError, policy);
 
         // 6. Structured logging based on policy

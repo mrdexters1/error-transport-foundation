@@ -1,6 +1,6 @@
 import type { BaseError } from "../core/base-error";
 import { ValidationError } from "../domain/validation-error";
-import { ApiResponseError } from "../transport/api-response-error";
+import { ApiResponseError } from "../infrastructure/api-response-error";
 
 export type ErrorPolicy = {
   shouldReport: boolean;

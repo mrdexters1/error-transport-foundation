@@ -4,7 +4,7 @@ import { ErrorCodes } from "../../../errors/core/error-codes";
 import { NotFoundError } from "../../../errors/domain/domain-errors";
 import { ValidationError } from "../../../errors/domain/validation-error";
 import { classifyError } from "../../../errors/processing/classify-error";
-import { NetworkError } from "../../../errors/transport/network-error";
+import { NetworkError } from "../../../errors/infrastructure/network-error";
 import { UnexpectedError } from "../../../errors/unexpected/unexpected-error";
 
 describe("classifyError", () => {

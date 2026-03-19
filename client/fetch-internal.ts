@@ -1,6 +1,6 @@
 import { isApiErrorResponse } from "../errors/processing/error-response";
-import { ApiResponseError } from "../errors/transport/api-response-error";
-import { FetchError } from "../errors/transport/fetch-error";
+import { ApiResponseError } from "../errors/infrastructure/api-response-error";
+import { FetchError } from "../errors/infrastructure/fetch-error";
 import { type FetchJSONParams, fetchJSON } from "./fetch-json";
 
 export type FetchInternalParams<T> = Omit<

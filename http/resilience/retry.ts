@@ -1,5 +1,5 @@
-import { FetchError } from "../../errors/transport/fetch-error";
-import { TimeoutError } from "../../errors/transport/resilience-errors";
+import { FetchError } from "../../errors/infrastructure/fetch-error";
+import { TimeoutError } from "../../errors/infrastructure/resilience-errors";
 
 type BackoffStrategy = "fixed" | "exponential" | "linear";
 

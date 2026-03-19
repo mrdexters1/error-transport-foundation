@@ -1,4 +1,4 @@
-import { CircuitOpenError } from "../../errors/transport/resilience-errors";
+import { CircuitOpenError } from "../../errors/infrastructure/resilience-errors";
 import {
   type CircuitData,
   type CircuitState,

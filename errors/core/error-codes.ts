@@ -17,7 +17,7 @@ export const ErrorCodes = {
   INVALID_PARAM: "INVALID_PARAM",
   PAYLOAD_TOO_LARGE: "PAYLOAD_TOO_LARGE",
 
-  // Infrastructure/Transport Errors (502, 503, 504)
+  // Infrastructure/Infrastructure Errors (502, 503, 504)
   FETCH_ERROR: "FETCH_ERROR",
   NETWORK_ERROR: "NETWORK_ERROR",
   CIRCUIT_OPEN_ERROR: "CIRCUIT_OPEN_ERROR",

@@ -30,7 +30,7 @@ The goal is consistent error handling across all projects.
 
 ## What It Includes
 
-- Structured error hierarchy (Domain, Transport, Infrastructure, Unexpected)
+- Structured error hierarchy (Domain, Infrastructure, Unexpected)
 - Pure error processing pipeline
 - Universal fetch client
 - Thin Next.js adapters
@@ -72,7 +72,7 @@ const data = await fetchJSON("/external-api", {
 ## Design Principles
 
 - Never throw plain objects.
-- Transport reports facts, policy defines meaning.
+- Infrastructure reports facts, policy defines meaning.
 - Domain does not know about HTTP.
 - Proxy and integration behaviors are explicit.
 - Core is framework-independent.
@@ -89,16 +89,16 @@ Use:
 
 See [`docs/`](docs/) for detailed guides:
 
-- [Architecture](docs/architecture.md)
-- [Error Model](docs/error-model.md)
-- [UI Error Handling](docs/ui-error-handling.md)
-- [Processing Pipeline](docs/processing-pipeline.md)
-- [Client Usage](docs/client-usage.md)
-- [Next.js Integration](docs/next-integration.md)
-- [Proxy vs Integration](docs/proxy-vs-integration.md)
-- [Guards and Validation](docs/guards-and-validation.md)
-- [Resilience](docs/resilience.md)
-- [Observability](docs/observability.md) (Sentry, logging, reporting)
+- [Architecture](docs/architecture.md) — High-level overview, folder structure, and dependency rules.
+- [Error Model](docs/error-model.md) — Core error hierarchy (Domain, Infrastructure, Application).
+- [Processing Pipeline](docs/processing-pipeline.md) — Detailed look at the `classify → policy → map` flow.
+- [Client Usage](docs/client-usage.md) — Using `fetchJSON`, `fetchInternal`, and `fetchGraphQL`.
+- [Proxy vs Integration](docs/proxy-vs-integration.md) — Handling errors in forwarded vs internal calls.
+- [Next.js Integration](docs/next-integration.md) — Route Handlers, Server Actions, and automatic tracing.
+- [UI Error Handling](docs/ui-error-handling.md) — Mapping server errors to the frontend.
+- [Guards and Validation](docs/guards-and-validation.md) — Type guards and `asType` validators.
+- [Resilience](docs/resilience.md) — Timeouts, retries, and circuit breakers.
+- [Observability](docs/observability.md) — Logging, Sentry, and request tracing.
 
 ---
 

@@ -4,7 +4,7 @@ import {
   toApiErrorResponse,
 } from "../../../errors/processing/error-response";
 import { HttpError } from "../../../errors/processing/http-error";
-import { HttpStatus } from "../../../errors/transport/http-status";
+import { HttpStatus } from "../../../errors/infrastructure/http-status";
 
 describe("toApiErrorResponse", () => {
   describe("ApiErrorResponse shape", () => {

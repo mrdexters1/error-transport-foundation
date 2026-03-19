@@ -1,4 +1,4 @@
-import { TimeoutError } from "../../errors/transport/resilience-errors";
+import { TimeoutError } from "../../errors/infrastructure/resilience-errors";
 
 /**
  * Base type for fetch-like params that support AbortSignal via initParams.

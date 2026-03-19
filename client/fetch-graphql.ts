@@ -1,4 +1,4 @@
-import { GraphQLUpstreamError } from "../errors/transport/graphql-error";
+import { GraphQLUpstreamError } from "../errors/infrastructure/graphql-error";
 import { fetchJSON } from "./fetch-json";
 
 /**

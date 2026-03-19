@@ -7,8 +7,8 @@ import {
 import { ValidationError } from "../../../errors/domain/validation-error";
 import { getErrorPolicy } from "../../../errors/processing/error-policy";
 import { mapToHttpError } from "../../../errors/processing/http-mapper";
-import { HttpStatus } from "../../../errors/transport/http-status";
-import { NetworkError } from "../../../errors/transport/network-error";
+import { HttpStatus } from "../../../errors/infrastructure/http-status";
+import { NetworkError } from "../../../errors/infrastructure/network-error";
 import { UnexpectedError } from "../../../errors/unexpected/unexpected-error";
 
 describe("mapToHttpError", () => {

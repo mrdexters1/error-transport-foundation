@@ -4,7 +4,7 @@ This document defines the client-side error normalization layer. For server-side
 
 ## Rationale
 
-Server actions and API routes return structured errors (`ApiErrorResponse`). However, UI components should not inspect transport-level details (status codes, error codes, meta structures). This creates coupling between UI and transport layers.
+Server actions and API routes return structured errors (`ApiErrorResponse`). However, UI components should not inspect infrastructure-level details (status codes, error codes, meta structures). This creates coupling between UI and infrastructure layers.
 
 The UI error layer provides:
 
@@ -280,7 +280,7 @@ import { clearRootError } from "@/foundation/client";
 
 ## Forbidden Patterns
 
-### Transport Inspection
+### Infrastructure Inspection
 
 ```typescript
 // FORBIDDEN: Inspecting status codes in UI

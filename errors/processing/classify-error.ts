@@ -1,5 +1,5 @@
 import { BaseError } from "../core/base-error";
-import { NetworkError } from "../transport/network-error";
+import { NetworkError } from "../infrastructure/network-error";
 import { UnexpectedError } from "../unexpected/unexpected-error";
 
 /**

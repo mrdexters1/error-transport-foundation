@@ -1,11 +1,11 @@
 /**
  * UI Error Utilities
  *
- * Bridges the gap between transport errors (ApiErrorResponse) and UI layer.
+ * Bridges the gap between infrastructure errors (ApiErrorResponse) and UI layer.
  * Framework-agnostic: no UI library dependencies (sonner, etc.).
  *
  * Architecture:
- *   transport (ApiErrorResponse) → analyzeError() → UiError → UI components
+ *   infrastructure (ApiErrorResponse) → analyzeError() → UiError → UI components
  *
  * Single entry point: analyzeError(unknown) → UiError
  * All guards and utilities work with UiError, not raw errors.
@@ -59,7 +59,7 @@ export type AnalyzeErrorOptions = {
 
 /**
  * Normalized error model for UI consumption.
- * Decoupled from transport layer (ApiErrorResponse).
+ * Decoupled from infrastructure layer (ApiErrorResponse).
  */
 export type UiError = {
   /** Original error code (SCREAMING_SNAKE_CASE) */

@@ -6,7 +6,7 @@
  * - meta: machine-readable data for programmatic handling
  * - message: human-readable text for UI
  * - code: error classification for logic branching
- * - status: HTTP transport layer
+ * - status: HTTP infrastructure layer
  */
 export type ApiErrorMeta =
   | {
