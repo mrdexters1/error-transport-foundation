@@ -24,10 +24,24 @@ const result = await fetchJSON({
   body: { amount: 1000, currency: "usd" },
 });
 
-// With type guard validation
+// With Schema validation (Recommended)
+import { z } from "zod";
+
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+const user = await fetchJSON({
+  url: "https://api.example.com/user/1",
+  method: "GET",
+  schema: UserSchema,
+});
+
+// Legacy: With type guard validation
 interface User { id: string; name: string }
 
-const user = await fetchJSON<User>({
+const oldUser = await fetchJSON<User>({
   url: "https://api.example.com/user/1",
   method: "GET",
   response: (data): data is User =>
@@ -103,9 +117,7 @@ Use proxy mode when forwarding responses to the client.
 
 See [proxy-vs-integration.md](./proxy-vs-integration.md) for details.
 
-## Request Tracing
-
-All clients automatically propagate `x-request-id` header when `initializeFoundationServer()` is called. Request ID is stored via `AsyncLocalStorage` in server runtime.
+All clients automatically propagate `x-request-id` header when running in a supported server runtime (e.g. Next.js). Request ID is stored via `AsyncLocalStorage` and handled automatically by Foundation.
 
 ```ts
 // Explicit requestId

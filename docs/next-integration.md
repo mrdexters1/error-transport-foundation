@@ -89,16 +89,9 @@ classify → policy → map → log → respond
 Processing (`classify → policy → map`) is pure.
 Logging and response formatting happen in the adapter.
 
-## Initialization
+## Initialization (Automated)
 
-`initializeFoundationServer()` is required when using request tracing or `AsyncLocalStorage`. Required only in server runtime.
-
-```ts
-import { initializeFoundationServer } from "@/foundation/server";
-
-// Call once at server startup
-initializeFoundationServer();
-```
+Foundation automatically initializes server-side features (request tracing, logging) on the first use. No manual calls like `initializeFoundationServer()` are required in a typical Next.js setup.
 
 ## Type Definitions
 

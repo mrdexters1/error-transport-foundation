@@ -45,6 +45,8 @@ export type FetchJSONParams<T> = {
   body?: unknown;
   initParams?: Omit<RequestInit, "body" | "method" | "headers">;
   ignoreResponse?: boolean;
+  /** Schema for response validation (e.g. Zod or similar .parse() compatible) */
+  schema?: { parse: (data: unknown) => T };
   /** Optional key for idempotent mutations (POST/PUT/PATCH) */
   idempotencyKey?: string;
 };
@@ -86,6 +88,7 @@ export async function fetchJSON<T = unknown>({
   method,
   handleBadResponse = throwError,
   response,
+  schema,
   ignoreResponse = false,
   idempotencyKey,
 }: FetchJSONParams<T>): Promise<T> {
@@ -150,19 +153,31 @@ export async function fetchJSON<T = unknown>({
 
   const json = (await resp.json()) as unknown;
 
-  // No type guard — return as T (unsafe cast)
-  if (!response) {
-    return json as T;
+  // 1. Schema-based validation (Priority 1)
+  if (schema) {
+    try {
+      return schema.parse(json);
+    } catch {
+      return await handleBadResponse(resp, {
+        method,
+        json,
+        idempotencyKey,
+      });
+    }
   }
 
-  // Type guard provided — validate response
-  if (!response(json)) {
-    return await handleBadResponse(resp, {
-      method,
-      json,
-      idempotencyKey,
-    });
+  // 2. Legacy Type guard provided (Priority 2)
+  if (response) {
+    if (!response(json)) {
+      return await handleBadResponse(resp, {
+        method,
+        json,
+        idempotencyKey,
+      });
+    }
+    return json;
   }
 
-  return json;
+  // 3. No guard provided — unsafe cast (Discouraged)
+  return json as T;
 }

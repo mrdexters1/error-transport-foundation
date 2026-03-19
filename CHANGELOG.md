@@ -7,6 +7,7 @@
   - Automated `requestId` tracing for `logger` and `fetchJSON`. Tracing is now transparent and doesn't require manual initialization on the server.
   - Simplified public API in `foundation/next` to improve developer experience (DX).
   - Merged shutdown signal registration into a single automated flow.
+  - **Contract Safety**: Added optional `schema` validation to `fetchJSON` (compatible with Zod). This prevents runtime failures in UI due to backend contract changes.
 
 ### Added
 - `autoShutdown` helper in `foundation/next` for easy one-liner resource cleanup (e.g. database, redis).

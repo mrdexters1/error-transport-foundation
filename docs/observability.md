@@ -116,16 +116,9 @@ if (policy.shouldAlert) {
 
 ## Request Tracing
 
-Logger automatically includes `requestId` when Foundation is initialized. `initializeFoundationServer()` must run before handling requests. Tracing is optional but recommended in production environments.
+Logger automatically includes `requestId` when running in a supported server runtime (e.g. Next.js). Tracing is handles automatically by Foundation using `AsyncLocalStorage`. No manual initialization required.
 
 ```ts
-import { initializeFoundationServer } from "@/foundation/server";
-
-// Call once at startup
-initializeFoundationServer();
-
-// Now all logs include requestId from AsyncLocalStorage
+// Now all logs include requestId from AsyncLocalStorage automatically
 logger.info("Processing request"); // { requestId: "abc-123", ... }
 ```
-
-Request ID is propagated via `AsyncLocalStorage` in server runtime only.
